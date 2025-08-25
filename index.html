@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript">
+      // Script to handle payment completion
+      window.addEventListener("load", () => {
+        window.addEventListener("message", (event) => {
+          // Check if message is payment complete
+          if (event.data && event.data.type === "PAYMENT_COMPLETE") {
+            // Find and remove the iframe
+            const iframes = document.getElementsByTagName("iframe");
+            for (let iframe of iframes) {
+              iframe.parentNode.removeChild(iframe);
+            }
+
+            // Create h2 element for outcome message
+            const h2 = document.createElement("h2");
+            h2.textContent = `Payment ${event.data.outcome}`;
+
+            // Set color based on outcome
+            switch (event.data.outcome) {
+              case "expired":
+                h2.style.color = "blue";
+                break;
+              case "success":
+                h2.style.color = "green";
+                break;
+              case "error":
+                h2.style.color = "red";
+                break;
+            }
+
+            // Add h2 to body
+            document.body.appendChild(h2);
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Demo ecomm client</h1>
+    <h2>We sell everything!</h2>
+    <br />
+    <!-- src="http://localhost:4200/P.JAYOHONE.3eCa9gM?language=en" -->
+    <iframe
+      width="500px"
+      height="900px"
+      src="https://p-staging.kody.com/P.JAYOHONE.287HIIY?language=en"
+      style="border: 0"
+    ></iframe>
+  </body>
+</html>
