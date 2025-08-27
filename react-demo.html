@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KodyPay Payment Checkout Component Demo</title>
+    <style>
+      iframe {
+        border: 0;
+      }
+      .payment-status-expired {
+        color: blue;
+      }
+      .payment-status-success {
+        color: green;
+      }
+      .payment-status-error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>React Demo</h1>
+    <div id="react-app"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      function ReactApp() {
+        const [paymentStatus, setPaymentStatus] = useState();
+        const [iframeVisible, setIframeVisible] = useState(true);
+
+        useEffect(() => {
+          const handleMessage = (event) => {
+            if (event.data && event.data.type === "PAYMENT_COMPLETE") {
+              setIframeVisible(false);
+              setPaymentStatus(event.data.outcome);
+            }
+          };
+
+          window.addEventListener("message", handleMessage);
+          return () => {
+            window.removeEventListener("message", handleMessage);
+          };
+        }, []);
+
+        return (
+          <>
+            {iframeVisible && (
+              <iframe
+                width="770px"
+                height="900px"
+                src="https://p-staging.kody.com/P.JAYOHONE.6TtnbJn?language=en&isEmbeddedInIframe=1"
+              ></iframe>
+            )}
+            {paymentStatus && (
+              <h2 className={`payment-status-${paymentStatus}`}>
+                Payment {paymentStatus}
+              </h2>
+            )}
+          </>
+        );
+      }
+
+      const reactRoot = ReactDOM.createRoot(
+        document.getElementById("react-app")
+      );
+      reactRoot.render(<ReactApp />);
+    </script>
+  </body>
+</html>

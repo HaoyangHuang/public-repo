@@ -1,51 +1,58 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KodyPay Payment Checkout Component Demo</title>
+    <style>
+      iframe {
+        border: 0;
+      }
+      .payment-status-hidden {
+        display: none;
+      }
+      .payment-status-expired {
+        display: block;
+        color: blue;
+      }
+      .payment-status-success {
+        display: block;
+        color: green;
+      }
+      .payment-status-error {
+        display: block;
+        color: red;
+      }
+    </style>
     <script type="text/javascript">
       // Script to handle payment completion
-      window.addEventListener("load", () => {
+      window.addEventListener("DOMContentLoaded", () => {
         window.addEventListener("message", (event) => {
           // Check if message is payment complete
           if (event.data && event.data.type === "PAYMENT_COMPLETE") {
-            // Find and remove the iframe
-            const iframes = document.getElementsByTagName("iframe");
-            for (let iframe of iframes) {
-              iframe.parentNode.removeChild(iframe);
-            }
+            // Find and hide the iframe
+            const iframe = document.getElementById("kody-iframe");
+            iframe.style.display = "none";
 
-            // Create h2 element for outcome message
-            const h2 = document.createElement("h2");
+            const h2 = document.getElementById("payment-status");
             h2.textContent = `Payment ${event.data.outcome}`;
 
-            // Set color based on outcome
-            switch (event.data.outcome) {
-              case "expired":
-                h2.style.color = "blue";
-                break;
-              case "success":
-                h2.style.color = "green";
-                break;
-              case "error":
-                h2.style.color = "red";
-                break;
-            }
-
-            // Add h2 to body
-            document.body.appendChild(h2);
+            // Add class based on outcome
+            h2.classList.remove("payment-status-hidden");
+            h2.classList.add(`payment-status-${event.data.outcome}`);
           }
         });
       });
     </script>
   </head>
   <body>
-    <h1>Demo ecomm client</h1>
-    <h2>We sell everything!</h2>
-    <br />
+    <h1>Demo</h1>
     <iframe
-      width="500px"
+      id="kody-iframe"
+      width="770px"
       height="900px"
-      src="https://p-staging.kody.com/P.JAYOHONE.1vt3soe?language=en&isEmbeddedInIframe=1"
-      style="border: 0"
+      src="https://p-staging.kody.com/P.JAYOHONE.6TtnbJn?language=en&isEmbeddedInIframe=1"
     ></iframe>
+    <h2 id="payment-status" class="payment-status-hidden"></h2>
   </body>
 </html>

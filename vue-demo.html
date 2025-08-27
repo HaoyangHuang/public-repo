@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KodyPay Payment Checkout Component Demo</title>
+    <style>
+      iframe {
+        border: 0;
+      }
+      .payment-status-hidden {
+        display: none;
+      }
+      .payment-status-expired {
+        color: blue;
+      }
+      .payment-status-success {
+        color: green;
+      }
+      .payment-status-error {
+        color: red;
+      }
+    </style>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+  <body>
+    <h1>Vue Demo</h1>
+    <div id="vue-app"></div>
+
+    <script>
+      // Add a console log to check if Vue is loaded
+      console.log("Vue object:", Vue);
+
+      const { ref, onMounted, onBeforeUnmount } = Vue;
+
+      const VuePaymentStatus = {
+        template: `
+          <div>
+            <iframe
+              v-if="iframeVisible"
+              width="770px"
+              height="900px"
+              src="https://p-staging.kody.com/P.JAYOHONE.6TtnbJn?language=en&isEmbeddedInIframe=1"
+            ></iframe>
+            <h2 v-if="paymentStatus" :class="'payment-status-' + paymentStatus">
+              Payment {{ paymentStatus }}
+            </h2>
+          </div>
+        `,
+        setup() {
+          const paymentStatus = ref();
+          const iframeVisible = ref(true);
+
+          const handleMessage = (event) => {
+            if (event.data && event.data.type === "PAYMENT_COMPLETE") {
+              iframeVisible.value = false;
+              paymentStatus.value = event.data.outcome;
+            }
+          };
+
+          onMounted(() => {
+            window.addEventListener("message", handleMessage);
+          });
+
+          onBeforeUnmount(() => {
+            window.removeEventListener("message", handleMessage);
+          });
+
+          return {
+            paymentStatus,
+            iframeVisible,
+          };
+        },
+      };
+
+      // Use Vue.createApp directly
+      Vue.createApp(VuePaymentStatus).mount("#vue-app");
+    </script>
+  </body>
+</html>
