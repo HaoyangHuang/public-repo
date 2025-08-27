@@ -25,6 +25,22 @@
       }
     </style>
     <script type="text/javascript">
+      const iframeDomain = () => {
+        const { hostname, protocol } = window.location;
+        // 本地环境判断
+        const isLocal =
+          hostname === "localhost" ||
+          hostname === "127.0.0.1" ||
+          hostname === "0.0.0.0" ||
+          protocol === "file:";
+
+        if (isLocal) {
+          return "http://localhost:4200";
+        }
+
+        return "https://p-staging.kody.com";
+      };
+
       // Script to handle payment completion
       window.addEventListener("DOMContentLoaded", () => {
         window.addEventListener("message", (event) => {
@@ -43,16 +59,19 @@
           }
         });
       });
+
+      window.addEventListener("load", () => {
+        const iframe = document.getElementById("kody-iframe");
+        // expired - 5CQ5U1q, 6TtnbJn - paid/error
+        const id =
+          new URLSearchParams(window.location.search).get("id") || "6TtnbJn";
+        iframe.src = iframeDomain() + `/P.JAYOHONE.${id}?isEmbeddedInIframe=1`;
+      });
     </script>
   </head>
   <body>
     <h1>Demo</h1>
-    <iframe
-      id="kody-iframe"
-      width="770px"
-      height="900px"
-      src="https://p-staging.kody.com/P.JAYOHONE.6TtnbJn?language=en&isEmbeddedInIframe=1"
-    ></iframe>
+    <iframe id="kody-iframe" width="600px" height="900px"></iframe>
     <h2 id="payment-status" class="payment-status-hidden"></h2>
   </body>
 </html>

@@ -28,19 +28,32 @@
     <div id="vue-app"></div>
 
     <script>
-      // Add a console log to check if Vue is loaded
-      console.log("Vue object:", Vue);
-
       const { ref, onMounted, onBeforeUnmount } = Vue;
 
-      const VuePaymentStatus = {
+      const iframeDomain = () => {
+        const { hostname, protocol } = window.location;
+        // 本地环境判断
+        const isLocal =
+          hostname === "localhost" ||
+          hostname === "127.0.0.1" ||
+          hostname === "0.0.0.0" ||
+          protocol === "file:";
+
+        if (isLocal) {
+          return "http://localhost:4200";
+        }
+
+        return "https://p-staging.kody.com";
+      };
+
+      const VueApp = {
         template: `
           <div>
             <iframe
               v-if="iframeVisible"
-              width="770px"
+              width="600px"
               height="900px"
-              src="https://p-staging.kody.com/P.JAYOHONE.6TtnbJn?language=en&isEmbeddedInIframe=1"
+              :src="iframeSrc"
             ></iframe>
             <h2 v-if="paymentStatus" :class="'payment-status-' + paymentStatus">
               Payment {{ paymentStatus }}
@@ -50,6 +63,12 @@
         setup() {
           const paymentStatus = ref();
           const iframeVisible = ref(true);
+
+          // expired - 5CQ5U1q, 6TtnbJn - paid/error
+          const id =
+            new URLSearchParams(window.location.search).get("id") || "6TtnbJn";
+
+          const iframeSrc = `${iframeDomain()}/P.JAYOHONE.${id}?isEmbeddedInIframe=1`;
 
           const handleMessage = (event) => {
             if (event.data && event.data.type === "PAYMENT_COMPLETE") {
@@ -69,12 +88,12 @@
           return {
             paymentStatus,
             iframeVisible,
+            iframeSrc,
           };
         },
       };
 
-      // Use Vue.createApp directly
-      Vue.createApp(VuePaymentStatus).mount("#vue-app");
+      Vue.createApp(VueApp).mount("#vue-app");
     </script>
   </body>
 </html>
