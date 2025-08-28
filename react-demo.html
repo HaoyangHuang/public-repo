@@ -7,6 +7,8 @@
     <style>
       iframe {
         border: 0;
+        display: block;
+        margin: 0 auto;
       }
       .payment-status-expired {
         color: blue;
@@ -72,8 +74,8 @@
           <>
             {iframeVisible && (
               <iframe
-                width="600px"
-                height="900px"
+                width="800px"
+                height="620px"
                 src={`${iframeDomain()}/P.JAYOHONE.${id}?isEmbeddedInIframe=1`}
               ></iframe>
             )}
