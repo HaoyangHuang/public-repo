@@ -70,7 +70,7 @@
           const id =
             new URLSearchParams(window.location.search).get("id") || "6TtnbJn";
 
-          const iframeSrc = `${iframeDomain()}/P.JAYOHONE.${id}?isEmbeddedInIframe=1`;
+          const iframeSrc = `${iframeDomain()}/${id}?isEmbeddedInIframe=1`;
 
           const handleMessage = (event) => {
             if (event.data && event.data.type === "PAYMENT_COMPLETE") {
